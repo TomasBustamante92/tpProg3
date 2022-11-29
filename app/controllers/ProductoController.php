@@ -8,22 +8,27 @@ class ProductoController extends Producto implements IApiUsable
     {
       $parametros = $request->getParsedBody();
       
-        $nombre = $parametros['nombre'];
-        $tipoUsuario = $parametros['tipoUsuario'];
-        $precio = $parametros['precio'];
+      $nombre = $parametros['nombre'];
+      $tipoUsuario = $parametros['tipoUsuario'];
+      $precio = $parametros['precio'];
+      $stock = $parametros['stock'];
+      $tiempoDePreparacion = $parametros['tiempoDePreparacion'];
 
-        // Creamos el producto
-        $p = new Producto();
-        $p->nombre = $nombre;
-        $p->tipoUsuario = $tipoUsuario;
-        $p->precio = $precio;
-        $p->crearProducto();
 
-        $payload = json_encode(array("mensaje" => "Producto creada con exito"));
+      // Creamos el producto
+      $p = new Producto();
+      $p->nombre = $nombre;
+      $p->tipoUsuario = $tipoUsuario;
+      $p->precio = $precio;
+      $p->stock = $stock;
+      $p->tiempoDePreparacion = $tiempoDePreparacion;
+      $p->crearProducto();
 
-        $response->getBody()->write($payload);
-        return $response
-          ->withHeader('Content-Type', 'application/json');
+      $payload = json_encode(array("mensaje" => "Producto " . $p->nombre . " creado con exito"));
+    
+      $response->getBody()->write($payload);
+      return $response
+        ->withHeader('Content-Type', 'application/json');
     }
 
     public function TraerUno($request, $response, $args)

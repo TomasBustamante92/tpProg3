@@ -15,6 +15,10 @@ require __DIR__ . '/../vendor/autoload.php';
 require_once './db/AccesoDatos.php';
 require_once './middlewares/CambiarMesaMiddleware.php';
 require_once './middlewares/AutentificadorPersonalMiddleware.php';
+require_once './middlewares/SocioMiddleware.php';
+require_once './middlewares/MozoMiddleware.php';
+
+
 
 require_once './controllers/LoginController.php';
 require_once './controllers/UsuarioController.php';
@@ -40,68 +44,55 @@ $app->addBodyParsingMiddleware();
 
 // USUARIOS
 $app->group('/usuarios', function (RouteCollectorProxy $group) {
-  // $group->put('/modificar', \UsuarioController::class . ':ModificarUno');
-  // $group->delete('/eliminar', \UsuarioController::class . ':BorrarUno');
-  
   $group->get('[/]', \UsuarioController::class . ':TraerTodos');
   $group->get('/{usuario}', \UsuarioController::class . ':TraerUno');
   $group->post('[/]', \UsuarioController::class . ':CargarUno');
-})/*->add(new AutentificadorMiddleware())*/;
+})->add(new AutentificadorSocioMiddleware());
 
 // PEDIDOS
 $app->group('/pedidos', function (RouteCollectorProxy $group) {
-  // $group->delete('/eliminar', \UsuarioController::class . ':BorrarUno');
-  
-  //$group->get('/{codigoPedido}', \PedidoController::class . ':TiempoDeEspera'); // para el cliente solo tiempo de espera
-  //$group->post('/modificar', \PedidoController::class . ':ModificarUno')->add(new AutentificadorPersonalMiddleware());
-  $group->get('/{codigoPedido}', \PedidoController::class . ':TraerUno');
-  $group->get('[/]', \PedidoController::class . ':TraerTodos')->add(new AutentificadorPersonalMiddleware());
-  $group->post('[/]', \PedidoController::class . ':CargarUno')->add(new AutentificadorPersonalMiddleware());
+  $group->get('/{pedidoId}', \PedidoController::class . ':TraerUno')->add(new AutentificadorSocioMiddleware());
+  $group->get('[/]', \PedidoController::class . ':TraerTodos')->add(new AutentificadorSocioMiddleware());
+  $group->post('[/]', \PedidoController::class . ':CargarUno')->add(new AutentificadorMozoMiddleware());
 });
 
 // PEDIDO INDIVIDUAL
 $app->group('/pedidoIndividuales', function (RouteCollectorProxy $group) {
-  // $group->delete('/eliminar', \UsuarioController::class . ':BorrarUno');
-  
-  $group->get('/pendientes', \PedidoIndividualController::class . ':TraerPendientes')->add(new AutentificadorPersonalMiddleware());
   $group->post('/modificar', \PedidoIndividualController::class . ':ModificarUno')->add(new AutentificadorPersonalMiddleware());
-  $group->get('/{pedidoIndividualId}', \PedidoIndividualController::class . ':TraerUno');
-  $group->get('[/]', \PedidoIndividualController::class . ':TraerTodos');
-  $group->post('[/]', \PedidoIndividualController::class . ':CargarUno');
+  $group->get('/pedidosAtrasados', \PedidoIndividualController::class . ':TraerAtrasados')->add(new AutentificadorSocioMiddleware());
+  $group->get('/pendientes', \PedidoIndividualController::class . ':TraerPendientes')->add(new AutentificadorPersonalMiddleware());
+  $group->get('/enPreparacion', \PedidoIndividualController::class . ':TraerEnPreparacion')->add(new AutentificadorPersonalMiddleware());
+  $group->get('/listoParaServir', \PedidoIndividualController::class . ':TraerListoParaServir')->add(new AutentificadorMozoMiddleware());
+  $group->get('/{pedidoIndividualId}', \PedidoIndividualController::class . ':TraerUno')->add(new AutentificadorSocioMiddleware());
+  $group->get('[/]', \PedidoIndividualController::class . ':TraerTodos')->add(new AutentificadorSocioMiddleware());
+  $group->post('[/]', \PedidoIndividualController::class . ':CargarUno')->add(new AutentificadorMozoMiddleware());
 });
 
 // MESAS
 $app->group('/mesas', function (RouteCollectorProxy $group) {
-
-  // $group->delete('/eliminar', \UsuarioController::class . ':BorrarUno');
-
+  $group->get('/masUsada', \EncuestaController::class . ':TraerMasUsada')->add(new AutentificadorPersonalMiddleware());
+  $group->get('/cobrar', \MesaController::class . ':Cobrar')->add(new AutentificadorMozoMiddleware()); 
   $group->get('/tiempo', \MesaController::class . ':TraerTiempoDeEspera');
+  $group->get('[/]', \MesaController::class . ':TraerTodos')->add(new AutentificadorSocioMiddleware());
   $group->post('/modificar', \MesaController::class . ':ModificarUno')->add(new CambiarMesaMiddleware()); 
-  $group->get('[/]', \MesaController::class . ':TraerTodos');
-  $group->get('/{codigoDeMesa}', \MesaController::class . ':TraerUno');
-  $group->post('[/]', \MesaController::class . ':CargarUno')->add(new AutentificadorPersonalMiddleware());
-})/*->add(new AutentificadorMiddleware())*/;
+  $group->post('[/]', \MesaController::class . ':CargarUno')->add(new AutentificadorSocioMiddleware());
+  $group->get('/{codigoDeMesa}', \MesaController::class . ':TraerUno')->add(new AutentificadorSocioMiddleware());
+});
 
 // PRODUCTOS
 $app->group('/productos', function (RouteCollectorProxy $group) {
-
-  // $group->put('/modificar', \UsuarioController::class . ':ModificarUno');
-  // $group->delete('/eliminar', \UsuarioController::class . ':BorrarUno');
-  
   $group->get('[/]', \ProductoController::class . ':TraerTodos');
-  $group->get('/{ProductoId}', \ProductoController::class . ':TraerUno');
-  $group->post('[/]', \ProductoController::class . ':CargarUno');
-})/*->add(new AutentificadorMiddleware())*/;
+  $group->post('[/]', \ProductoController::class . ':CargarUno')->add(new AutentificadorSocioMiddleware());
+});
 
 // ENCUESTAS
 $app->group('/encuestas', function (RouteCollectorProxy $group) {
-  // $group->put('/modificar', \UsuarioController::class . ':ModificarUno');
-  // $group->delete('/eliminar', \UsuarioController::class . ':BorrarUno');
-  
+  $group->post('/importar', \EncuestaController::class . ':LeerCsv');
+  $group->get('/exportar', \EncuestaController::class . ':CrearCsv');
+  $group->get('/mejor', \EncuestaController::class . ':TraerMejor')->add(new AutentificadorSocioMiddleware());
   $group->get('[/]', \EncuestaController::class . ':TraerTodos');
-  $group->get('/{codigoDeMesa}', \EncuestaController::class . ':TraerUno');
   $group->post('[/]', \EncuestaController::class . ':CargarUno');
-})/*->add(new AutentificadorMiddleware())*/;
+});
 
 $app->post('/login', \LoginController::class . ':cargarUsuario');
 

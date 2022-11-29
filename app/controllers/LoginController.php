@@ -19,9 +19,9 @@ class LoginController{
         if($usuarioEncontrado != null){
             if(password_verify($clave, $usuarioEncontrado->clave) && $usuario == $usuarioEncontrado->usuario){ 
 
-                $datos = array('usuario'=>$usuario,'tipo'=>$usuarioEncontrado->tipo);
+                $datos = array('usuario'=>$usuario,'tipo'=>$usuarioEncontrado->tipo, 'UsuarioId'=>$usuarioEncontrado->UsuarioId);
                 $token = AutentificadorJWT::CrearToken($datos);
-                $payload = json_encode(array('Respuesta' => 'OK','tipo' => $usuarioEncontrado->tipo,'token' => $token));
+                $payload = json_encode(array('Respuesta' => 'OK','UsuarioId'=>$usuarioEncontrado->UsuarioId, 'usuario'=>$usuario, 'tipo' => $usuarioEncontrado->tipo,'token' => $token));
             }
             else{
                 $payload = json_encode(array('mensaje' => "Usuario o clave incorrectos", 'status' => 401));

@@ -1,0 +1,12 @@
+encuestaId,codigoDeMesa,puntuacionMesa,puntuacionRestaurant,puntuacionMozo,puntuacionCocinero,encuesta
+3,me001,2,6,7,10,zafa
+4,me002,9,9,10,10,tremendo
+5,me002,9,9,10,10,aun mejor que la ultima vez
+30,me003,9,9,10,10,estuvo bastante bien
+31,me003,2,4,3,2,recontra a-to-mi-co
+32,me001,9,9,10,11,es pec ta cu lah, increible
+42,me004,1,1,1,1,muy malo
+43,me002,7,8,5,6,el pavo estaba un poco seco
+45,me003,1,1,1,1,pesimo servicio
+46,me001,1,1,1,1,meh
+47,me001,7,8,5,6,el pavo estaba un poco seco

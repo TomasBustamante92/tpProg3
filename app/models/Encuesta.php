@@ -24,7 +24,7 @@ class Encuesta
 
         return $objAccesoDatos->obtenerUltimoId();
     }
-
+    
     public static function obtenerTodos()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();

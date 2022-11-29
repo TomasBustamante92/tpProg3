@@ -6,15 +6,17 @@ class Usuario
     public $tipo;
     public $usuario;
     public $clave;
+    public $cantOperaciones;
 
     public function crearUsuario()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO usuarios (tipo, usuario, clave) VALUES (:tipo, :usuario, :clave)");
+        $consulta = $objAccesoDatos->prepararConsulta("INSERT INTO usuarios (tipo, usuario, clave, cantOperaciones) VALUES (:tipo, :usuario, :clave, :cantOperaciones)");
         $claveHash = password_hash($this->clave, PASSWORD_DEFAULT);
         $consulta->bindValue(':tipo', $this->tipo, PDO::PARAM_STR);
         $consulta->bindValue(':usuario', $this->usuario, PDO::PARAM_STR);
         $consulta->bindValue(':clave', $claveHash);
+        $consulta->bindValue(':cantOperaciones', $this->cantOperaciones, PDO::PARAM_STR);
         $consulta->execute();
 
         return $objAccesoDatos->obtenerUltimoId();
@@ -23,7 +25,7 @@ class Usuario
     public static function obtenerTodos()
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT UsuarioId, tipo, usuario, clave FROM usuarios");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT UsuarioId, tipo, usuario, clave, cantOperaciones FROM usuarios");
         $consulta->execute();
 
         return $consulta->fetchAll(PDO::FETCH_CLASS, 'Usuario');
